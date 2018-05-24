@@ -77,12 +77,12 @@ psi0[i] ~ dt(0, 2.5, 1) # initial occupancy
 psi_urb[i] ~ dt(0, 2.5, 1) # urb on initial occupancy
 pmu[i] ~ dt(0, 2.5,1)               # persistence intercept
 lp[i] ~ dt(0, 2.5, 1)               # detection intercept
-gmu[i] ~ dnorm(0, 0.3)              # colonization mu for ranef
+gmu[i] ~ dnorm(0, 0.3)              # colonization mu 
 ##
 # temporal random effect on colonization
 ##
 for(t in 1:(nyear-1)){
-	gyr[t,i] ~  dnorm(gmu[i], tau_yr[i])
+	gyr[t,i] ~  dnorm(0, tau_yr[i])
 }
 tau_yr[i] ~ dgamma(1,1)
 }
@@ -103,19 +103,19 @@ tau_yr[i] ~ dgamma(1,1)
 	##
 		# Linear predictor for coyote
 	logit(psi[1,k,t]) <- (z[1,k,t-1] * (pmu[1] + pb[1] * pcov[k])) +
-		(1 - z[1,k,t-1]) * (gyr[t-1,1] + gb[1] * pcov[k])
+		(1 - z[1,k,t-1]) * (gmu[1] + gb[1] * pcov[k] + gyr[t-1,1])
 		# Linear predictor for deer
 	logit(psi[2,k,t]) <- 
 	 (z[2,k,t-1]*(1-z[1,k,t-1])*(pmu[2] + pb[2] * pcov[k])) + # phi w/o coyote
-	 (z[2,k,t-1]*z[1,k,t-1]*(pmu[2] + inprod(a[2,,2], inxscov[k,]))) + #phi w/ coyote
-	 ((1 - z[2,k,t-1])*(1-z[1,k,t-1])*(gyr[t-1,2] + gb[2] * pcov[k])) + #gam w/o coyote
-	 ((1 - z[2,k,t-1])*z[1,k,t-1]*(gyr[t-1,2]+inprod(a[2,,1],inxscov[k,]))) # gam w/ coy
+	 (z[2,k,t-1]*z[1,k,t-1]*(inprod(a[2,,2], inxscov[k,]))) + #phi w/ coyote
+	 ((1 - z[2,k,t-1])*(1-z[1,k,t-1])*(gmu[2] + gb[2] * pcov[k] + gyr[t-1,2])) + #gam w/o coyote
+	 ((1 - z[2,k,t-1])*z[1,k,t-1]*(inprod(a[2,,1],inxscov[k,] + gyr[t-1,2]))) # gam w/ coy
 	# Linear predictor for rabbit
 	logit(psi[3,k,t]) <- 
 		(z[3,k,t-1]*(1-z[1,k,t-1])*(pmu[3] + pb[3] * pcov[k])) + # phi w/o coyote
-		(z[3,k,t-1]*z[1,k,t-1]*(pmu[3] + inprod(a[3,,2], inxscov[k,]))) + #phi w/ coyote
-		((1 - z[3,k,t-1])*(1-z[1,k,t-1])*(gyr[t-1,3] + gb[3] * pcov[k])) + #gam w/o coyote
-		((1 - z[3,k,t-1])*z[1,k,t-1]*(gyr[t-1,3]+inprod(a[3,,1],inxscov[k,]))) # gam w/ coy
+		(z[3,k,t-1]*z[1,k,t-1]*(inprod(a[3,,2], inxscov[k,]))) + #phi w/ coyote
+		((1 - z[3,k,t-1])*(1-z[1,k,t-1])*(gmu[3] + gb[3] * pcov[k] + gyr[t-1,3])) + #gam w/o coyote
+		((1 - z[3,k,t-1])*z[1,k,t-1]*(inprod(a[3,,1],inxscov[k,] + gyr[t-1,3]))) # gam w/ coy
 	##
 	# Likelihood
 	##
@@ -128,26 +128,23 @@ tau_yr[i] ~ dgamma(1,1)
 ### VIGILANCE ANALYSIS #############
 ####################################
   for(k in 1:n_event_deer){
-      logit(vig_prob_deer[k]) <- v0[1] + # baseline
-      	(vig_urb[1] * vcov[hups_loc_deer[k,1]] * # if no coyote
-      	(1 - z[1,hups_loc_deer[k,1],hups_loc_deer[k,2]])) + 
-        vcoy0[1] * z[1,hups_loc_deer[k,1],hups_loc_deer[k,2]] + # if coyote
-      	(vcoy_urb[1] * vcov[hups_loc_deer[k,1]] *               #if coyote
-      	z[1,hups_loc_deer[k,1],hups_loc_deer[k,2]])
+      logit(vig_prob_deer[k]) <- 
+      	((v0[1] + vig_urb[1] * vcov[hups_loc_deer[k,1]]) *     # if no coyote
+      	(1 - z[1,hups_loc_deer[k,1],hups_loc_deer[k,2]])) +    # if no coyote
+        ((vcoy0[1] + vcoy_urb[1] * vcov[hups_loc_deer[k,1]]) * # if coyote              
+        		z[1,hups_loc_deer[k,1],hups_loc_deer[k,2]])        # if coyote
       hup_deer[k] ~ dbin(vig_prob_deer[k], 
       	                 phot_deer[hups_loc_deer[k,1],hups_loc_deer[k,2]])
   }
 for(k2 in 1:n_event_rab){
-      logit(vig_prob_rab[k2]) <- v0[2] + # baseline
-      	(vig_urb[2] * vcov[hups_loc_rab[k2,1]] * # if no coyote
-      	(1 - z[1,hups_loc_rab[k2,1],hups_loc_rab[k2,2]])) + 
-        vcoy0[2] * z[1,hups_loc_rab[k2,1],hups_loc_rab[k2,2]] + # if coyote
-      	(vcoy_urb[2] * vcov[hups_loc_rab[k2,1]] *               # if coyote
-      	 z[1,hups_loc_rab[k2,1],hups_loc_rab[k2,2]]) 
+      logit(vig_prob_rab[k2]) <- 
+      	((v0[2] + vig_urb[2] * vcov[hups_loc_rab[k2,1]]) *     # if no coyote
+      	(1 - z[1,hups_loc_rab[k2,1],hups_loc_rab[k2,2]])) +    # if no coyote
+        ((vcoy0[2] + vcoy_urb[2] * vcov[hups_loc_rab[k2,1]]) * # if coyote
+      	 z[1,hups_loc_rab[k2,1],hups_loc_rab[k2,2]])           # if coyote
       hup_rab[k2] ~ dbin(vig_prob_rab[k2], 
       	                 phot_rab[hups_loc_rab[k2,1],hups_loc_rab[k2,2]])
   }
-
 ####################################
 ### OBSERVATIONAL PROCESS ##########
 ####################################
@@ -155,10 +152,10 @@ for(k2 in 1:n_event_rab){
 	for(k in 1:nsite){
 		for(t in 1:nyear){
 		  logit(dprob[1,k,t]) <- lp[1] +  lpb[1]*lpcov[k]
-		  logit(dprob[2,k,t]) <- lp[2] + (lpb[2]*lpcov[k] *  (1 - z[1,k,t])) + 
-		  	                       (inprod(da[2,], inxscov[k,]) * z[1,k,t])
-		  logit(dprob[3,k,t]) <- lp[3] + (lpb[3]*lpcov[k] *  (1 - z[1,k,t])) + 
-		  	                       (inprod(da[3,], inxscov[k,]) * z[1,k,t])
+		  logit(dprob[2,k,t]) <- ((lp[2] + lpb[2]*lpcov[k]) *  (1 - z[1,k,t])) + 
+		  	                         (inprod(da[2,], inxscov[k,]) * z[1,k,t])
+		  logit(dprob[3,k,t]) <- ((lp[3] + lpb[3]*lpcov[k]) *  (1 - z[1,k,t])) + 
+		  	                         (inprod(da[3,], inxscov[k,]) * z[1,k,t])
 		  for(i in 1:nspec){
 		mu[i,k,t] <- z[i,k,t] * dprob[i,k,t]
 		y[i,k,t] ~ dbin(mu[i,k,t], J[k,t])
@@ -177,22 +174,22 @@ psinit[3] <- ilogit(psi0[3])
 pmup[1] <- ilogit(pmu[1])
 pmup[2] <- ilogit(pmu[2])
 pmup[3] <- ilogit(pmu[3])
-cdp[1] <- ilogit(a[2,1,2] + pmu[2])
-cdp[2] <- ilogit(a[3,1,2] + pmu[3])
+cdp[1] <- ilogit(a[2,1,2])
+cdp[2] <- ilogit(a[3,1,2])
 
 for(t in 1:(nyear-1)){
   for(k in 1:nspec){
-    gyrp[t,k] <- ilogit(gyr[t,k])
+    gyrp[t,k] <- ilogit(gmu[k] + gyr[t,k])
   }
   cdg[t,1] <- ilogit(a[2,1,1] + gyr[t,2])
   cdg[t,2] <- ilogit(a[3,1,1] + gyr[t,3])
 }
-PSIA[1] <- psinit[1] * (pmup[1]) + (1 - psinit[1]) * gyrp[1,1]
+PSIA[1] <-  psinit[1] * (pmup[1]) + (1 - psinit[1]) * gyrp[1,1]
 PSIBa[1] <- psinit[2] * (pmup[2]) + (1 - psinit[2]) * gyrp[1,2]
 PSICa[1] <- psinit[3] * (pmup[3]) + (1 - psinit[3]) * gyrp[1,3]
 PSIBA[1] <- psinit[2] * (cdp[1]) + (1 - psinit[2]) * (cdg[1,1])
 PSICA[1] <- psinit[3] * (cdp[2]) + (1 - psinit[2]) * (cdg[1,2])
-PSIB[1] <- PSIA[1] * PSIBA[1] + (1 - PSIA[1]) * PSIBa[1]
+PSIB[1] <-  PSIA[1] * PSIBA[1] + (1 - PSIA[1]) * PSIBa[1]
 PSIC[1] <- PSIA[1] * PSICA[1] + (1 - PSIA[1]) * PSICa[1]
 PSIAB[1] <- PSIA[1] * PSIBA[1]
 PSIAC[1] <- PSIA[1] * PSICA[1]
@@ -216,12 +213,12 @@ for(t in 2:(nyear-1)){
 pmup_low[1] <- ilogit(pmu[1] - pb[1])
 pmup_low[2] <- ilogit(pmu[2] - pb[2])
 pmup_low[3] <- ilogit(pmu[3] - pb[3])
-cdp_low[1] <- ilogit(a[2,1,2] + pmu[2] - pb[2] - a[2,2,2])
-cdp_low[2] <- ilogit(a[3,1,2] + pmu[3] - pb[3] - a[3,2,2])
+cdp_low[1] <- ilogit(a[2,1,2] - a[2,2,2])
+cdp_low[2] <- ilogit(a[3,1,2] - a[3,2,2])
 
 for(t in 1:(nyear-1)){
     for(k in 1:3){
-    gyrp_low[t,k] <- ilogit(gyr[t,k] - gb[k])
+    gyrp_low[t,k] <- ilogit(gmu[k] + gyr[t,k] - gb[k])
     }
   cdg_low[t,1] <- ilogit(a[2,1,1] + gyr[t,2] - a[2,2,1])
   cdg_low[t,2] <- ilogit(a[3,1,1] + gyr[t,3] - a[3,2,1])
@@ -258,8 +255,8 @@ for(t in 2:(nyear-1)){
 pmup_high[1] <- ilogit(pmu[1] + pb[1])
 pmup_high[2] <- ilogit(pmu[2] + pb[2])
 pmup_high[3] <- ilogit(pmu[3] + pb[3])
-cdp_high[1] <- ilogit(a[2,1,2] + pmu[2] + a[2,2,2])
-cdp_high[2] <- ilogit(a[3,1,2] + pmu[3] + a[3,2,2])
+cdp_high[1] <- ilogit(a[2,1,2] + a[2,2,2])
+cdp_high[2] <- ilogit(a[3,1,2] + a[3,2,2])
 
 for(t in 1:(nyear-1)){
   for(k in 1:3){
