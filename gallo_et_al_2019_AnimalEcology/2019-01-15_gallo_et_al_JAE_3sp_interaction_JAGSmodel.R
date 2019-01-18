@@ -84,6 +84,8 @@ gmu[i] ~ dnorm(0, 0.3)              # colonization mu
 for(t in 1:(nyear-1)){
 	gyr[t,i] ~  dnorm(0, tau_yr[i])
 }
+# different precision for each species, using 
+#  inverse gamma prior.
 tau_yr[i] ~ dgamma(1,1)
 }
 ####################################
@@ -92,7 +94,7 @@ tau_yr[i] ~ dgamma(1,1)
 	for(k in 1:nsite){
 		for(i in 1:nspec){
 	##
-	# Initial occupancy, Intercept only.
+	# Initial occupancy
 	##
 	logit(psi[i,k,1]) <- psi0[i] + psi_urb[i]*pcov[k]
 	z[i,k,1] ~ dbern(psi[i,k,1])
@@ -163,34 +165,40 @@ for(k2 in 1:n_event_rab){
 	}
 }
 
-#  PSIA = Coyote
-#  PSIB = Deer
+# Calculate SIF at average level of occupancy
+#  Since the covariates are mean centered the average
+#  is just the intercepts.
+#
+# Example of some parameters
+# PSIA = Coyote
+# PSIB = Deer
 # PSIAB = Deer conditional on coyote
 # convert logit scale parameters to 
 # probabilities
-psinit[1] <- ilogit(psi0[1])
-psinit[2] <- ilogit(psi0[2])
-psinit[3] <- ilogit(psi0[3])
-pmup[1] <- ilogit(pmu[1])
-pmup[2] <- ilogit(pmu[2])
-pmup[3] <- ilogit(pmu[3])
-cdp[1] <- ilogit(a[2,1,2])
-cdp[2] <- ilogit(a[3,1,2])
+psinit[1] <- ilogit(psi0[1]) # coyote occupancy
+psinit[2] <- ilogit(psi0[2]) # deer occupancy
+psinit[3] <- ilogit(psi0[3]) # rabbit occupancy
+pmup[1] <- ilogit(pmu[1])  # coyote persistence
+pmup[2] <- ilogit(pmu[2]) # deer persistence w/o coyote
+pmup[3] <- ilogit(pmu[3]) # rabbit persistence w/o coyote
+cdp[1] <- ilogit(a[2,1,2]) # deer persistence w/ coyote
+cdp[2] <- ilogit(a[3,1,2]) # rabbit persistence w/ coyote
 
 for(t in 1:(nyear-1)){
   for(k in 1:nspec){
-    gyrp[t,k] <- ilogit(gmu[k] + gyr[t,k])
+    gyrp[t,k] <- ilogit(gmu[k] + gyr[t,k]) # colonization w/ random effect
   }
-  cdg[t,1] <- ilogit(a[2,1,1] + gyr[t,2])
-  cdg[t,2] <- ilogit(a[3,1,1] + gyr[t,3])
+  cdg[t,1] <- ilogit(a[2,1,1] + gyr[t,2]) # deer colonization w/ coyote & random effect
+  cdg[t,2] <- ilogit(a[3,1,1] + gyr[t,3]) # rabbit colonization w/ coyote & random effect
 }
+# calculating all of the components of the SIF
 PSIA[1] <-  psinit[1] * (pmup[1]) + (1 - psinit[1]) * gyrp[1,1]
 PSIBa[1] <- psinit[2] * (pmup[2]) + (1 - psinit[2]) * gyrp[1,2]
 PSICa[1] <- psinit[3] * (pmup[3]) + (1 - psinit[3]) * gyrp[1,3]
 PSIBA[1] <- psinit[2] * (cdp[1]) + (1 - psinit[2]) * (cdg[1,1])
 PSICA[1] <- psinit[3] * (cdp[2]) + (1 - psinit[2]) * (cdg[1,2])
 PSIB[1] <-  PSIA[1] * PSIBA[1] + (1 - PSIA[1]) * PSIBa[1]
-PSIC[1] <- PSIA[1] * PSICA[1] + (1 - PSIA[1]) * PSICa[1]
+PSIC[1] <-  PSIA[1] * PSICA[1] + (1 - PSIA[1]) * PSICa[1]
 PSIAB[1] <- PSIA[1] * PSIBA[1]
 PSIAC[1] <- PSIA[1] * PSICA[1]
 SIF_deer[1] <- PSIAB[1]/(PSIA[1]*PSIB[1])
@@ -209,7 +217,9 @@ for(t in 2:(nyear-1)){
   SIF_rab[t] <- PSIAC[t]/(PSIA[t]*PSIC[t])
 }
 
-# making these negative because it is the parameter times -1
+# Calculate SIF when URB is at -1.
+#  We go through all of these calculations again.
+#  Making these negative because it is the parameter times -1
 pmup_low[1] <- ilogit(pmu[1] - pb[1])
 pmup_low[2] <- ilogit(pmu[2] - pb[2])
 pmup_low[3] <- ilogit(pmu[3] - pb[3])
@@ -247,10 +257,7 @@ for(t in 2:(nyear-1)){
   SIF_deer_low[t] <- PSIAB_low[t]/(PSIA_low[t]*PSIB_low[t])
   SIF_rab_low[t] <- PSIAC_low[t]/(PSIA_low[t]*PSIC_low[t])
 }
-
-
-
-# now doing it for high
+# now doing it for high URB (URB = 1).
 #
 pmup_high[1] <- ilogit(pmu[1] + pb[1])
 pmup_high[2] <- ilogit(pmu[2] + pb[2])
