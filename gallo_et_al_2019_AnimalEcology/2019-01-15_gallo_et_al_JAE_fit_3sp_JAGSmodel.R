@@ -222,20 +222,21 @@ pred_vig <- function (mmat, index){
   y <- xmat %*% t(mmat[,c(paste0("v0[",index,"]"), paste0("vig_urb[",index,"]"))])
   # Summarize
   y2 <- apply(y, 1, quantile, probs = c(0.025, 0.5, 0.975))
-  # Backtransform
+  # Backtransform to probability scale
   yp <- ex(y2)
   
-  # With coyote - same process as above now we include a 1 that indicates coyotes present
+  # With coyote - same process as above, but we use the logit-linear predictor
+  #  for coyote being present.
   w <- xmat %*% t(mmat[,c(paste0("vcoy0[",index,"]"), paste0("vcoy_urb[",index,"]"))])
   w2 <- apply(w, 1, quantile, probs = c(0.025, 0.5, 0.975))
-  # Backtransform
+  # Backtransform to probability scale
   wp <- ex(w2)
   
   # Predict coyote occupancy
   gam <- xmat %*% t(mmat[,c(paste0("gmu[1]"),paste0("gb[1]"))])
   col <- ex(gam) # backtransform logit parameter
   phi <- xmat %*% t(mmat[,c(paste0("pmu[1]"),paste0("pb[1]"))])
-  ext <- 1-ex(phi) # backtransform logit parameter
+  ext <- 1-ex(phi) # backtransform logit parameter and calculate extinction.
   occu <- col/(col+ext)
   # Summarize
   occu2 <- apply(occu, 1, quantile, probs = c(0.025, 0.5, 0.975))
