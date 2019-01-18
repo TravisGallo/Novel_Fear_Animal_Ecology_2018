@@ -45,7 +45,8 @@ vig_JAGS_setup <- function(index, model) {
   # Total photos
   phot_deer <- vig_deer[2,,]
   #  phot_deer cannot have NA values as it is not a random variable
-  #  supplied to JAGS. 
+  #  supplied to JAGS. These values do not actually get supplied to the
+  #  model as we skip over them in the analysis.
   phot_deer[is.na(phot_deer)] <- 0.001
   
   # Read in vigilance data for rabbit
@@ -69,6 +70,10 @@ vig_JAGS_setup <- function(index, model) {
   phot_rab <- phot_rab[-tg,]
   
   # Convert head up data to long form
+  
+  #  hups_loc_deer indexes where we actually have data to put into the
+  #  vigilance model and is used to skip over where we have placed 0.001 values
+  #  in phot_deer.
   hups_loc_deer <- which(!is.na(hups_deer)==TRUE, arr.ind=TRUE)
   hups_long_deer <- rep(0,nrow(hups_loc_deer))
   for(i in 1:length(hups_long_deer)){
