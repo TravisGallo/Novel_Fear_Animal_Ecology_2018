@@ -24,7 +24,7 @@ site_names <- read.table("./Data/2019-01-15_gallo_et_al_JAE_sites_used_in_sp10_s
 site_names <- site_names[-23,] 
 
 
-## Set up data for three species co-occurance model and vigilance binomial model
+## Set up data for three species co-occurence model and vigilance binomial model
 # Function that sets up data for JAGs run
 vig_JAGS_setup <- function(index, model) {
   
@@ -44,11 +44,10 @@ vig_JAGS_setup <- function(index, model) {
   hups_deer <- vig_deer[1,,]
   # Total photos
   phot_deer <- vig_deer[2,,]
-  #
+  #  phot_deer cannot have NA values as it is not a random variable
+  #  supplied to JAGS. These values do not actually get supplied to the
+  #  model as we skip over them in the analysis.
   phot_deer[is.na(phot_deer)] <- 0.001
-  #
-  phot_bin_deer <- phot_deer
-  phot_bin_deer[phot_bin_deer > 1] <- 1
   
   # Read in vigilance data for rabbit
   vig_rab <- df_2_array(read.csv("./Data/2019-01-15_gallo_et_al_JAE_rabbit_vigilance.csv", header = TRUE))
@@ -58,9 +57,6 @@ vig_JAGS_setup <- function(index, model) {
   phot_rab <- vig_rab[2,,]
   #
   phot_rab[is.na(phot_rab)] <- 0.001
-  #
-  phot_bin_rab <- phot_rab
-  phot_bin_rab[phot_bin_rab > 1] <- 1
   
   # Removing any site with only 1 season of data
   tg <- which(rowSums(is.na(z[1,,]))>9)
@@ -70,12 +66,14 @@ vig_JAGS_setup <- function(index, model) {
   j <- j_mat[-tg,]
   hups_deer <- hups_deer[-tg,]
   phot_deer <- phot_deer[-tg,]
-  phot_bin_deer <- phot_bin_deer[-tg,]
   hups_rab <- hups_rab[-tg,]
   phot_rab <- phot_rab[-tg,]
-  phot_bin_rab <- phot_bin_rab[-tg,]
   
   # Convert head up data to long form
+  
+  #  hups_loc_deer indexes where we actually have data to put into the
+  #  vigilance model and is used to skip over where we have placed 0.001 values
+  #  in phot_deer.
   hups_loc_deer <- which(!is.na(hups_deer)==TRUE, arr.ind=TRUE)
   hups_long_deer <- rep(0,nrow(hups_loc_deer))
   for(i in 1:length(hups_long_deer)){
@@ -96,24 +94,24 @@ vig_JAGS_setup <- function(index, model) {
   
   # Set up data for JAGS
   data_list <- list(
-    y = y,
-    nyear = dim(z)[3], 
-    nsite = dim(z)[2], 
-    nspec = dim(z)[1],
-    J = as.matrix(j),
-    pcov = pc$x[,1],
-    lpcov = pc$x[,1],
-    vcov = pc$x[,1],
-    inxscov = as.matrix(data.frame(a = 1, b = pc$x[,1])),
-    ncov_phi = 1,
-    phot_deer = phot_deer,
-    phot_rab = phot_rab,
-    hup_deer = hups_long_deer,
-    hup_rab = hups_long_rab,
-    hups_loc_deer=as.matrix(hups_loc_deer),
-    n_event_deer=nrow(hups_loc_deer),
-    hups_loc_rab=as.matrix(hups_loc_rab),
-    n_event_rab=nrow(hups_loc_rab)
+    y = y, # detection / non-detection data
+    nyear = dim(z)[3], # number of seasons sampled
+    nsite = dim(z)[2], # number of sites sampled
+    nspec = dim(z)[1], # number of species
+    J = as.matrix(j),  # number of days sampled per site and season
+    pcov = pc$x[,1],   # urb covariate for persistance
+    lpcov = pc$x[,1],  # urb covariate for detection
+    vcov = pc$x[,1],   # urb covariate for vigilance
+    inxscov = as.matrix(data.frame(a = 1, b = pc$x[,1])), # design matrix for inxs
+    ncov_phi = 1, # number of slope terms for persistence
+    phot_deer = phot_deer, # number of deer photos
+    phot_rab = phot_rab,   # number of rabbit photos
+    hup_deer = hups_long_deer, # number of head up deer photos
+    hup_rab = hups_long_rab, # number of head up rabbit photos
+    hups_loc_deer=as.matrix(hups_loc_deer), # connects long format data to site
+    n_event_deer=nrow(hups_loc_deer), # used to loop through vigilance analysis
+    hups_loc_rab=as.matrix(hups_loc_rab), # connects long format data to site
+    n_event_rab=nrow(hups_loc_rab) # used to loop through vigilance analysis
     )
   
   # Set up initial values
@@ -170,10 +168,10 @@ vig_JAGS_setup <- function(index, model) {
     monitor = tmon , 
     data = data_list ,  
     inits = inits , 
-    n.chains = detectCores()-6 ,
+    n.chains = 2 ,
     adapt = 10000,
     burnin = 10000, 
-    sample = ceiling(100000/(detectCores()-6)) ,
+    sample = 50000,
     thin = 2,
     summarise = FALSE ,
     plots = FALSE,
@@ -224,20 +222,21 @@ pred_vig <- function (mmat, index){
   y <- xmat %*% t(mmat[,c(paste0("v0[",index,"]"), paste0("vig_urb[",index,"]"))])
   # Summarize
   y2 <- apply(y, 1, quantile, probs = c(0.025, 0.5, 0.975))
-  # Backtransform
+  # Backtransform to probability scale
   yp <- ex(y2)
   
-  # With coyote - same process as above now we include a 1 that indicates coyotes present
+  # With coyote - same process as above, but we use the logit-linear predictor
+  #  for coyote being present.
   w <- xmat %*% t(mmat[,c(paste0("vcoy0[",index,"]"), paste0("vcoy_urb[",index,"]"))])
   w2 <- apply(w, 1, quantile, probs = c(0.025, 0.5, 0.975))
-  # Backtransform
+  # Backtransform to probability scale
   wp <- ex(w2)
   
   # Predict coyote occupancy
   gam <- xmat %*% t(mmat[,c(paste0("gmu[1]"),paste0("gb[1]"))])
   col <- ex(gam) # backtransform logit parameter
   phi <- xmat %*% t(mmat[,c(paste0("pmu[1]"),paste0("pb[1]"))])
-  ext <- 1-ex(phi) # backtransform logit parameter
+  ext <- 1-ex(phi) # backtransform logit parameter and calculate extinction.
   occu <- col/(col+ext)
   # Summarize
   occu2 <- apply(occu, 1, quantile, probs = c(0.025, 0.5, 0.975))
