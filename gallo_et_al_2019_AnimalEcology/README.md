@@ -25,10 +25,10 @@
 
 **2019-01-15_gallo_et_al_JAE_activity.data.csv** - Data for each photograph of coyote, white-tailed deer, and Eastern cottontail used to estimate daily activity patterns.
 
-**2019-01-15_gallo_et_al_JAE_deer_vigilance.csv** -
+**2019-01-15_gallo_et_al_JAE_deer_vigilance.csv** - Data indicating if a deer had their head up or down in a photograph.
 
-**2019-01-15_gallo_et_al_JAE_rabbit_vigilance.csv** - 
+**2019-01-15_gallo_et_al_JAE_rabbit_vigilance.csv** - Data indicating if a rabbit had their head up or down in a photograph.
 
-**Note:** All of these files must be within your working directory for the analysis to work.  Our analysis was done in parallel and used all but two of the cores in a computer. Therefore, if you have two or less cores on your computer you will need to adjust the settings annotated within gallo_et_al_2018_bat_landscape_analysis.R.
+**Note:** All of these files must be within your working directory for the analysis to work. Our analysis was done in parallel and used all but two of the cores in a computer. Therefore, if you have two or less cores on your computer you will need to adjust the settings annotated within 2019-01-15_gallo_et_al_JAE_fit_3sp_JAGSmodel.R.
 
 ![Eastern cottontail line drawing by mason](https://github.com/TravisGallo/Novel_Fear_Animal_Ecology_2018/blob/master/gallo_et_al_2019_AnimalEcology/coyote-deer-rabbit.png)
