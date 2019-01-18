@@ -31,4 +31,4 @@
 
 **Note:** All of these files must be within your working directory for the analysis to work.  Our analysis was done in parallel and used all but two of the cores in a computer. Therefore, if you have two or less cores on your computer you will need to adjust the settings annotated within gallo_et_al_2018_bat_landscape_analysis.R.
 
-![Eastern cottontail line drawing by mason](https://github.com/TravisGallo/Novel_Fear_Animal_Ecology_2018/blob/master/gallo_et_al_2019_AnimalEcology/white_rabbit.png)
+![Eastern cottontail line drawing by mason](https://github.com/TravisGallo/Novel_Fear_Animal_Ecology_2018/blob/master/gallo_et_al_2019_AnimalEcology/coyote-deer-rabbit.png)
