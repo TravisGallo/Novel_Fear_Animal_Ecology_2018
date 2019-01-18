@@ -10,7 +10,7 @@ package_load<-function(packages = c("reshape2"), quiet=TRUE, verbose=FALSE, warn
     require(packages[i], character.only=T, quietly=quiet, warn.conflicts=warn.conflicts)
 }
 
-# change the dataframe back to an array
+# Change the dataframe back to an array
 df_2_array <- function(my_df = NULL){
   
   require(reshape2)
@@ -19,6 +19,8 @@ df_2_array <- function(my_df = NULL){
   return(my_array)
 }
 
+# A modified version of the overlap funciton in package overlap
+# Calculates density estimates but returns dataframe instead of auto plotting results
 overlap_mod <- function (A, B, xscale = 24, xcenter = c("noon", "midnight"), 
                          linetype = c(1,2), linecol = c("black", "blue"),
                          linewidth = c(1,1), olapcol = "lightgrey", rug = FALSE, 

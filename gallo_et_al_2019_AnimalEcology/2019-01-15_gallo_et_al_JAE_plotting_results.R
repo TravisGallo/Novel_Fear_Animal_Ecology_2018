@@ -1,4 +1,4 @@
-# run analysis
+# Run analysis
 source("2019-01-15_gallo_et_al_JAE_fit_3sp_JAGSmodel.R")
 
 
@@ -98,7 +98,7 @@ plot_vig <- function(yp, wp, species, co, occu, vig_results, y_label=TRUE, legen
     mtext("Probability of vigilance",2, line=2, font=2, cex=1.1)
   }
   
-  # 95% credible Intervals
+  # 95% credible intervals
   x1 <- pred_deer_vig$co
   x2 <- rev(pred_deer_vig$co)
   y1 <- yp[1,]
@@ -162,7 +162,7 @@ plot_overlap <- function(density, estimate, species, coyt_den, y_label=TRUE, leg
                                 hi=sprintf("%.2f",round(quantile(estimate,probs=0.975), digits=2)))), 
        cex=1.5, xpd=TRUE)
   
-  # Draw the overalp polygon for first MCMC iteration
+  # Draw the overalap polygon for first MCMC iteration
   polygon(c(0,density[[1]][,1],24),c(0,density[[1]][,4],0),
           col=alpha("grey89",0.01), border=NA)
   
@@ -175,7 +175,9 @@ plot_overlap <- function(density, estimate, species, coyt_den, y_label=TRUE, leg
   }
   # Loop through to draw all lines for each MCMC interation
   for (i in 2:length(density)){
+    # Without coyote
     lines(density[[i]][,1],density[[i]][,2], col=alpha("black", 0.01), lwd=1)
+    # With coyote
     lines(density[[i]][,1],density[[i]][,3], col=alpha("#F6274C", 0.01), lwd=1)
   }
   

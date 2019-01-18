@@ -1,6 +1,6 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 ## FITTING 3-SPECIES OCCUPANCY MODEL, BINOMIAL VIGILANCE MODEL, AND OVERLAP ANALYSIS ##
-## CODE ASSOCIATED WITH GALLO ET AL 2019 ANIMAL ECOLOGY##
+## SCRIPT ASSOCIATED WITH GALLO ET AL 2019 ANIMAL ECOLOGY##
 ## URBANIZATION ALTERS PREDATOR AVOIDANCE BEHAVIOR ##
 ## BY TRAVIS GALLO and MASON FIDINO ##
 ## Urban Wildlife Institute ##
@@ -55,7 +55,9 @@ vig_JAGS_setup <- function(index, model) {
   hups_rab <- vig_rab[1,,]
   # Total photos
   phot_rab <- vig_rab[2,,]
-  #
+  #  phot_rab cannot have NA values as it is not a random variable
+  #  supplied to JAGS. These values do not actually get supplied to the
+  #  model as we skip over them in the analysis.
   phot_rab[is.na(phot_rab)] <- 0.001
   
   # Removing any site with only 1 season of data
@@ -79,6 +81,7 @@ vig_JAGS_setup <- function(index, model) {
   for(i in 1:length(hups_long_deer)){
     hups_long_deer[i] <- hups_deer[hups_loc_deer[i,1],hups_loc_deer[i,2]]
   }
+  # Same as above but for rabbit
   hups_loc_rab <- which(!is.na(hups_rab)==TRUE, arr.ind=TRUE)
   hups_long_rab <- rep(0,nrow(hups_loc_rab))
   for(i in 1:length(hups_long_rab)){
