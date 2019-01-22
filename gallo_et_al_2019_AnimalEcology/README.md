@@ -2,9 +2,9 @@
 ## **Gallo, T., M. Fidino, E.W. Lehrer, and S. Magle. Urbanization alters predator avoidance behaviors. 2019. _Journal of Animal Ecology_ DOI:**
 
 
-# **File Descriptions:**
+# **File Descriptions**
 
-## **Scripts**
+## **Scripts:**
 There are 4 scripts needed to run this analysis
 
 **2019-01-15_gallo_et_al_JAE_plotting_results.R** – the only file that you need to open. Sources files below to load data sets, format data for JAGS model, run JAGS model, summarize posterior distributions, calculate derived parameters, and create Figure 2 from manuscript.
@@ -15,7 +15,7 @@ There are 4 scripts needed to run this analysis
 
 **2019-01-15_gallo_et_al_JAE_utility_script.R** - script that loads utility functions. Sourced in 2019-01-15_gallo_et_al_JAE_fit_3sp_JAGSmodel.R.
 
-## **Data Files**
+## **Data Files:**
 There are 9 data files needed to run this analysis
 
 **2019-01-15_gallo_et_al_JAE_y_matrix_sp10_sp13.txt** - The number of days each species was detected and is supplied as data to the JAGS model so that each species detection probability can be calculated. This array is ordered by species by site by season. Species are in the same order as 2019-01-15_gallo_et_al_JAE_species_used_in_sp10_sp13_analysis.txt and sites are in the same order as 2019-01-15_gallo_et_al_JAE_sites_used_in_sp10_sp13_analysis.txt.
@@ -38,4 +38,4 @@ There are 9 data files needed to run this analysis
 
 **Note:** All of these files must be within your working directory for the analysis to work. Our analysis was done in parallel and used 2 cores. Therefore, if you will need to adjust the settings annotated within 2019-01-15_gallo_et_al_JAE_fit_3sp_JAGSmodel.R.
 
-![Eastern cottontail line drawing by mason](https://github.com/TravisGallo/Novel_Fear_Animal_Ecology_2018/blob/master/gallo_et_al_2019_AnimalEcology/coyote-deer-rabbit.png)
+![Eastern cottontail, white-tailed deer, and coyote line drawing by mason](https://github.com/TravisGallo/Novel_Fear_Animal_Ecology_2018/blob/master/gallo_et_al_2019_AnimalEcology/coyote-deer-rabbit.png)
