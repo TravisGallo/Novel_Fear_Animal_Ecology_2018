@@ -3,29 +3,29 @@
 
 # **Authors**
 
-  >>Travis Gallo
-  Lincoln Park Zoo, Urban Wildlife Institute, 
-  Department of Conservation and Science 
-  2001 N. Clark St., Chicago, IL 60614
-  tgallo@lpzoo.org
-  
-  Mason Fidino
-  Lincoln Park Zoo, Urban Wildlife Institute, 
-  Department of Conservation and Science 
-  2001 N. Clark St., Chicago, IL 60614
-  mfidino@lpzoo.org
-  
-  Elizabeth W. Lehrer
-  Lincoln Park Zoo, Urban Wildlife Institute, 
-  Department of Conservation and Science 
-  2001 N. Clark St., Chicago, IL 60614
-  llehrer@lpzoo.org
-  
-  Seth Magle
-  Lincoln Park Zoo, Urban Wildlife Institute, 
-  Department of Conservation and Science 
-  2001 N. Clark St., Chicago, IL 60614
-  smagle@lpzoo.org
+Travis Gallo
+Lincoln Park Zoo, Urban Wildlife Institute, 
+Department of Conservation and Science 
+2001 N. Clark St., Chicago, IL 60614
+tgallo@lpzoo.org
+
+Mason Fidino
+Lincoln Park Zoo, Urban Wildlife Institute, 
+Department of Conservation and Science 
+2001 N. Clark St., Chicago, IL 60614
+mfidino@lpzoo.org
+
+Elizabeth W. Lehrer
+Lincoln Park Zoo, Urban Wildlife Institute, 
+Department of Conservation and Science 
+2001 N. Clark St., Chicago, IL 60614
+llehrer@lpzoo.org
+
+Seth Magle
+Lincoln Park Zoo, Urban Wildlife Institute, 
+Department of Conservation and Science 
+2001 N. Clark St., Chicago, IL 60614
+smagle@lpzoo.org
 
 
 # **File Descriptions**
