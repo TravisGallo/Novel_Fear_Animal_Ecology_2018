@@ -3,8 +3,7 @@
 
 # **Authors**
 
-Travis Gallo
-
+Travis Gallo  
 Lincoln Park Zoo, Urban Wildlife Institute, 
 Department of Conservation and Science 
 2001 N. Clark St., Chicago, IL 60614
