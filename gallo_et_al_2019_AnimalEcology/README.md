@@ -1,5 +1,5 @@
 # R script, JAGS models, and data used to assess how urbanization changes predator avoidance behaviors in Chicago, IL USA
-## **Gallo, T., M. Fidino, E.W. Lehrer, and S. Magle. Urbanization alters predator avoidance behaviors. 2019. _Journal of Animal Ecology_ DOI:**
+## **Gallo, T., M. Fidino, E.W. Lehrer, and S. Magle. Urbanization alters predator avoidance behaviors. 2019. _Journal of Animal Ecology_**
 
 # **Authors**
 
