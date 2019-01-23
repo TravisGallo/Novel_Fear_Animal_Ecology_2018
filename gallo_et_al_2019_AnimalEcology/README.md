@@ -62,6 +62,6 @@ There are 9 data files needed to run this analysis
 
 **2019-01-15_gallo_et_al_JAE_rabbit_vigilance.csv** - Data indicating if a rabbit had their head up or down in a photograph.
 
-**Note:** All of these files must be within your working directory for the analysis to work. Our analysis was done in parallel and used 2 cores. Therefore, if you will need to adjust the settings annotated within 2019-01-15_gallo_et_al_JAE_fit_3sp_JAGSmodel.R.
+**Note:** All of these files must be within your working directory for the analysis to work. Our analysis was done in parallel and used 2 cores. Therefore, you will need to adjust the settings annotated within 2019-01-15_gallo_et_al_JAE_fit_3sp_JAGSmodel.R accordingly.
 
 ![Eastern cottontail, white-tailed deer, and coyote line drawing by mason](https://github.com/TravisGallo/Novel_Fear_Animal_Ecology_2018/blob/master/gallo_et_al_2019_AnimalEcology/coyote-deer-rabbit.png)
