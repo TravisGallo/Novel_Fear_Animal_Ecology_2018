@@ -1,6 +1,24 @@
 # R script, JAGS models, and data used to assess how urbanization changes predator avoidance behaviors in Chicago, IL USA
 ## **Gallo, T., M. Fidino, E.W. Lehrer, and S. Magle. Urbanization alters predator avoidance behaviors. 2019. _Journal of Animal Ecology_ DOI:**
 
+# **Authors**
+
+    Travis Gallo
+    Lincoln Park Zoo, Urban Wildlife Institute, Department of Conservation and Science 2001 N. Clark St., Chicago, IL 60614
+    tgallo@lpzoo.org
+
+    Mason Fidino
+    Lincoln Park Zoo, Urban Wildlife Institute, Department of Conservation and Science 2001 N. Clark St., Chicago, IL 60614
+    mfidino@lpzoo.org
+
+    Elizabeth W. Lehrer
+    Lincoln Park Zoo, Urban Wildlife Institute, Department of Conservation and Science 2001 N. Clark St., Chicago, IL 60614
+    llehrer@lpzoo.org
+
+    Seth Magle
+    Lincoln Park Zoo, Urban Wildlife Institute, Department of Conservation and Science 2001 N. Clark St., Chicago, IL 60614
+    smagle@lpzoo.org
+
 
 # **File Descriptions**
 
