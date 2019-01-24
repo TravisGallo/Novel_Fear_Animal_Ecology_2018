@@ -198,7 +198,7 @@ plot_overlap <- function(density, estimate, species, coyt_den, y_label=TRUE, leg
 m <- matrix(seq(1,6,1),nrow=3, ncol=2, byrow=TRUE)
 
 # Call device
-tiff("2019-01-15_gallo_et_al_JAE_Figure2.tiff",width=173, height=180, units="mm", res=600, compression="lzw")
+tiff("gallo_et_al_JAE_Figure2.tiff",width=173, height=180, units="mm", res=600, compression="lzw")
 # Call layout
 layout(m)
 # Set parameters
